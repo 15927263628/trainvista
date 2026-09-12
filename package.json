@@ -1,0 +1,33 @@
+{
+  "name": "trainvista",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "start": "node scripts/services.mjs",
+    "stop": "node scripts/services.mjs stop",
+    "dev": "vite --host 127.0.0.1 --port 5180 --strictPort",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 5180 --strictPort",
+    "test:e2e": "node scripts/e2e.mjs",
+    "test:api": ".venv/bin/python -m scripts.verify_api",
+    "browser:install": "PLAYWRIGHT_BROWSERS_PATH=./.playwright playwright install chromium"
+  },
+  "dependencies": {
+    "@xyflow/react": "^12.8.5",
+    "echarts": "^6.0.0",
+    "lucide-react": "^0.468.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-router-dom": "^7.8.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.9",
+    "@vitejs/plugin-react": "^4.7.0",
+    "playwright": "^1.55.0",
+    "typescript": "^5.9.2",
+    "vite": "^6.3.5"
+  }
+}
