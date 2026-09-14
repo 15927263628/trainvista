@@ -29,5 +29,8 @@
     "playwright": "^1.55.0",
     "typescript": "^5.9.2",
     "vite": "^6.3.5"
+  },
+  "overrides": {
+    "rollup": "npm:@rollup/wasm-node@4.63.2"
   }
 }
