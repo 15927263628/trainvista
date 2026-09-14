@@ -14,8 +14,11 @@ if (process.argv[2] === 'stop') {
     const pid = pids[name];
     if (!Number.isInteger(pid) || pid < 2) continue;
     let command;
-    try { command = execFileSync('ps', ['-p', String(pid), '-o', 'command='], { encoding: 'utf8' }); }
-    catch { console.log(`${name} is already stopped.`); continue; }
+    try { command = process.platform === 'win32'
+      ? execFileSync('powershell.exe', ['-NoProfile', '-Command', '(Get-CimInstance -ErrorAction Stop Win32_Process -Filter "ProcessId = ' + pid + '").CommandLine'], { encoding: 'utf8', windowsHide: true })
+      : execFileSync('ps', ['-p', String(pid), '-o', 'command='], { encoding: 'utf8' }); }
+    catch (error) { if (process.platform === 'win32') throw new Error(`Cannot inspect ${name} process; refusing to stop it. ${error.message}`); console.log(`${name} is already stopped.`); continue; }
+    if (!command.trim()) { console.log(`${name} is already stopped.`); continue; }
     const matches = name === 'backend'
       ? command.includes('uvicorn backend.app:app') && command.includes('--port 8100')
       : command.includes(resolve(root, 'node_modules/vite/bin/vite.js')) && command.includes('--port 5180');
@@ -28,7 +31,7 @@ if (process.argv[2] === 'stop') {
 if (process.env.TRAINVISTA_MODE && process.env.TRAINVISTA_MODE !== 'demo') {
   throw new Error('This launcher supports demo mode only. Live mode is not implemented.');
 }
-const python = resolve(root, '.venv/bin/python');
+const python = resolve(root, process.platform === 'win32' ? '.venv/Scripts/python.exe' : '.venv/bin/python');
 if (!existsSync(python)) throw new Error('Create .venv and install backend/requirements.txt first.');
 
 async function portFree(port) {
@@ -43,7 +46,7 @@ await portFree(5180);
 const children = [];
 function launch(command, args, name) {
   const fd = openSync(resolve(logDir, `${name}.log`), 'a');
-  const child = spawn(command, args, { cwd: root, detached: true, stdio: ['ignore', fd, fd], env: { ...process.env, TRAINVISTA_MODE: 'demo', PYTHONUNBUFFERED: '1' } });
+  const child = spawn(command, args, { cwd: root, windowsHide: true, detached: true, stdio: ['ignore', fd, fd], env: { ...process.env, TRAINVISTA_MODE: 'demo', PYTHONUNBUFFERED: '1' } });
   child.on('error', error => { console.error(error.message); process.exitCode = 1; });
   closeSync(fd);
   child.unref();
@@ -62,7 +65,7 @@ for (let i = 0; i < 30; i++) {
   } catch { /* Wait for the processes spawned above, with a bounded deadline. */ }
 }
 if (!ready) {
-  for (const child of children) { if (child.pid) { try { process.kill(-child.pid, 'SIGTERM'); } catch {} } }
+  for (const child of children) { if (child.pid) { try { process.kill(process.platform === 'win32' ? child.pid : -child.pid, 'SIGTERM'); } catch {} } }
   throw new Error(`Services did not become ready. Inspect ${logDir}`);
 }
 writeFileSync(pidFile, JSON.stringify({ backend, frontend, startedAt: new Date().toISOString() }, null, 2));

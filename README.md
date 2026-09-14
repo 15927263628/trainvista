@@ -14,7 +14,24 @@ TrainVista 将分散在调度、数据处理、训练、评测和模型管理工
 
 ## 快速启动
 
-推荐 Node.js 22+、Python 3.12+，首次安装：
+推荐 Node.js 22+、Python 3.12+。安装后重新打开终端，确认 `node --version` 和 Python 命令可用。
+
+### Windows（PowerShell / CMD）
+
+在项目根目录首次执行：
+
+```powershell
+npm.cmd ci
+py -3.12 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r backend/requirements.txt
+.\start.cmd
+```
+
+已安装依赖后，可双击 `start.cmd` 启动，双击 `stop.cmd` 停止，也可使用 `npm.cmd start` / `npm.cmd run stop`。无需激活虚拟环境。若没有 `py` 启动器，可用 `python -m venv .venv`（确认 Python 3.12+）。使用 `npm.cmd` 可避免 PowerShell 对 `npm.ps1` 的执行策略限制。
+
+### macOS / Linux
+
+首次安装：
 
 ```sh
 npm ci

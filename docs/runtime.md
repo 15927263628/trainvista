@@ -29,7 +29,9 @@ v0.1 实现了可运行的演示工作台和服务端控制协议，属于 P1 �
 - 健康检查：`GET /api/v1/health`
 - 停止：`npm run stop`
 
-手工运行可分别执行 `npm run dev` 和 `.venv/bin/python -m uvicorn backend.app:app --host 127.0.0.1 --port 8100`。应用仅供本机使用；不要使用多个 API worker，共享状态尚未持久化。
+Windows 安装依赖见 [README](../README.md)。可双击根目录 `start.cmd` / `stop.cmd`，或运行 `npm.cmd start` / `npm.cmd run stop`。Windows 手工启动后端使用 `.\.venv\Scripts\python.exe -m uvicorn backend.app:app --host 127.0.0.1 --port 8100`，前端使用 `npm.cmd run dev`。
+
+macOS / Linux 手工运行可分别执行 `npm run dev` 和 `.venv/bin/python -m uvicorn backend.app:app --host 127.0.0.1 --port 8100`。应用仅供本机使用；不要使用多个 API worker，共享状态尚未持久化。
 
 ## 验证与产物
 
